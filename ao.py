@@ -1,6 +1,7 @@
 # automatically creates an ambient occlusion render layer
 
 import maya.cmds as cmds
+import maya.mel as mel
 
 def UI():
 	# check to see if window exists
@@ -8,7 +9,7 @@ def UI():
 		cmds.deleteUI("ao")
 
 	# create window
-	window = cmds.window("ao", title="Add Ambient Occlusion", w=300, h=300, mxb=False, mnb=False, sizeable=False)
+	window = cmds.window("ao", title="Ambient Occlusion", w=300, h=300, mxb=False, mnb=False, sizeable=False)
 	
 	# create layout
 	mainLayout = cmds.columnLayout(w=300, h=300)
@@ -55,7 +56,7 @@ def createRL(numSamples, spread, maxDistance):
 	cmds.connectAttr(surfShader+'.outColor', sg+'.surfaceShader')
 
 	# select all objects in the layer and attach the shader
-	cmds.select(all=True)
+	cmds.select(ado=True)
 	cmds.hyperShade(a=surfShader)
 	
 # changes settings of mib_amb_occlusion
@@ -68,6 +69,13 @@ def changeAOSettings(numSamples=128, spread=0.8, maxDistance=0):
 def changeRS():
 	# switch to mental ray rendering
 	cmds.setAttr('defaultRenderGlobals.ren', 'mentalRay', type='string')
+	mel.eval('miCreateDefaultNodes')
+	# set filter to gaussian as layer overide
+	cmds.editRenderLayerAdjustment( 'miDefaultOptions.filter', layer='ao' )
+	cmds.setAttr('miDefaultOptions.filter', 2);
+	# set max samples to 2
+	cmds.setAttr('miDefaultOptions.maxSamples', 2)
+	cmds.setAttr('miDefaultOptions.minSamples', 0)
 	
 def addAmbOcc(*args):
 	samplesField = cmds.intField("numSamples", q=True, v=True)
@@ -86,7 +94,7 @@ def addAmbOcc(*args):
 def reAdd(samplesField, spreadField, maxDistanceField):
 	# switch to the ao render layer
 	cmds.editRenderLayerGlobals( currentRenderLayer='ao' )
-	cmds.select(all=True)
+	cmds.select(ado=True)
 	cmds.hyperShade(a='amb_occl_surf_shader')
 	
 	changeAOSettings(samplesField, spreadField, maxDistanceField)
