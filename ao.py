@@ -48,16 +48,14 @@ def createRL(numSamples, spread, maxDistance):
 	surfShader = cmds.shadingNode('surfaceShader', asShader=True, name='amb_occl_surf_shader')
 	aoShader = cmds.shadingNode('mib_amb_occlusion', asShader=True, name='amb_occl')
 	cmds.connectAttr(aoShader+'.outValue', surfShader+'.outColor')
-	# set the attributes to values from UI
-	changeAOSettings(numSamples, spread, maxDistance)
 
 	# create a new shading group for the ao shader
 	sg = cmds.sets(renderable=True, noSurfaceShader=True, empty=True, name='aoSG')
 	cmds.connectAttr(surfShader+'.outColor', sg+'.surfaceShader')
+	
+	# add objects to render layer and adjust settings
+	reAdd(numSamples, spread, maxDistance)
 
-	# select all objects in the layer and attach the shader
-	cmds.select(ado=True)
-	cmds.hyperShade(a=surfShader)
 	
 # changes settings of mib_amb_occlusion
 def changeAOSettings(numSamples=128, spread=0.8, maxDistance=0):
@@ -69,15 +67,17 @@ def changeAOSettings(numSamples=128, spread=0.8, maxDistance=0):
 def changeRS():
 	# switch to mental ray rendering
 	cmds.setAttr('defaultRenderGlobals.ren', 'mentalRay', type='string')
+	# create the mental ray rendering nodes so they can be changed
 	mel.eval('miCreateDefaultNodes')
 	# set filter to gaussian as layer overide
 	cmds.editRenderLayerAdjustment( 'miDefaultOptions.filter', layer='ao' )
 	cmds.setAttr('miDefaultOptions.filter', 2);
-	# set max samples to 2
+	# set the max/min samples
 	cmds.setAttr('miDefaultOptions.maxSamples', 2)
 	cmds.setAttr('miDefaultOptions.minSamples', 0)
 	
 def addAmbOcc(*args):
+	# get the values entered from the UI
 	samplesField = cmds.intField("numSamples", q=True, v=True)
 	spreadField = cmds.floatField("spread", q=True, v=True)
 	maxDistanceField = cmds.intField("maxDistance", q=True, v=True)
@@ -86,14 +86,13 @@ def addAmbOcc(*args):
 	if(aoExists()):
 		reAdd(samplesField, spreadField, maxDistanceField)
 	else:
-		# get the value entered into the number of samples field
 		createRL(samplesField, spreadField, maxDistanceField)
 		changeRS()
 
 # adds all objects to the ao layer	
 def reAdd(samplesField, spreadField, maxDistanceField):
 	# switch to the ao render layer
-	cmds.editRenderLayerGlobals( currentRenderLayer='ao' )
+	cmds.editRenderLayerGlobals(currentRenderLayer='ao')
 	cmds.select(ado=True)
 	cmds.hyperShade(a='amb_occl_surf_shader')
 	
