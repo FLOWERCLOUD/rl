@@ -14,18 +14,22 @@ def UI():
 	# create layout
 	mainLayout = cmds.columnLayout(w=640, h=360)
 	
+	currLayer = cmds.editRenderLayerGlobals( query=True, currentRenderLayer=True )
+	
 	# select render directory
 	cmds.separator(h=15)
 	cmds.text(label="Render Directory")
-	cmds.textField("renderDirField", w=640, tx='')
+	imageDirectory = cmds.workspace(q=True, rd=True)
+	imageDirectory += 'images/'
+	cmds.textField("renderDirField", w=640, tx=imageDirectory)
 	cmds.button(label="Select Render Directory", command=selRenderDir)
 	
 	# define folder name
 	cmds.separator(h=15)
 	cmds.text(label="Name")
-	cmds.textField("name", w=640, tx='')
+	cmds.textField("name", w=640, tx=currLayer)
 	
-	# select camera
+	# select renderer
 	cmds.separator(h=15)
 	cmds.text(label="Renderer")
 	cmds.optionMenu("renderer")
@@ -37,11 +41,23 @@ def UI():
 	cmds.optionMenu("rl")
 	populateOption('renderLayer', 'rl')
 	
+	selectCurrent("rl", 'renderLayer', currLayer)
+	
 	# select camera
 	cmds.separator(h=15)
 	cmds.text(label="Camera")
 	cmds.optionMenu("cam")
 	populateOption('camera', 'cam')
+	
+	currPanel = cmds.getPanel( withFocus=True )
+	panelType = cmds.getPanel(typeOf=currPanel)
+	# default to persp, otherwise try to find the cam of the current panel
+	currCam = 'persp'
+	if(panelType == 'modelPanel'):
+		currCam = cmds.modelEditor( currPanel, q=True, camera=True )
+		currCam = cmds.listRelatives(currCam, s=True)[0]
+		
+	selectCurrent("cam", 'camera', currCam)
 	
 	# start and end frame, by, padding
 	cmds.separator(h=15)
@@ -51,11 +67,14 @@ def UI():
 	cmds.intField("endFrame", v=cmds.getAttr('defaultRenderGlobals.endFrame'))
 	cmds.text(label="By Frame Step")
 	cmds.intField("by", v=cmds.getAttr('defaultRenderGlobals.byFrameStep'))
+	# set default padding to 4
+	cmds.setAttr('defaultRenderGlobals.extensionPadding', 4)
 	cmds.text(label="Padding")
 	cmds.intField("padding", v=cmds.getAttr('defaultRenderGlobals.extensionPadding'))
 	
 	# file format
 	cmds.separator(h=15)
+	cmds.text(label="File Format")
 	cmds.optionMenu("ff")
 	cmds.menuItem(label='exr', parent='ff')
 	cmds.menuItem(label='tif', parent='ff')
@@ -77,7 +96,9 @@ def UI():
 	
 def selRenderDir(*args):
 	# open a file browser to select a directory
-	renderDir = cmds.fileDialog2(ds=2, dir='~/', fm=3)
+	imageDirectory = cmds.workspace(q=True, rd=True)
+	imageDirectory += 'images/'
+	renderDir = cmds.fileDialog2(ds=2, dir=imageDirectory, fm=3)
 	cmds.textField("renderDirField", edit=True, tx=renderDir[0] + '/')
 	
 def addCommand(*args):
@@ -102,7 +123,12 @@ def clear(*args):
 	cmds.scrollField("commands", edit=True, tx='')
 	
 def populateOption(t, p):
-	renderLayers = cmds.ls(type=t)
-	for rl in renderLayers:
-		cmds.menuItem(label=rl, parent=p)
+	options = cmds.ls(type=t)
+	for o in options:
+		cmds.menuItem(label=o, parent=p)
 	
+def selectCurrent(optionMenuName, t, current):
+	options = cmds.ls(type=t)
+	for x in range(len(options)):
+		if(options[x] == current):
+			cmds.optionMenu(optionMenuName, edit=True, sl=x+1)
