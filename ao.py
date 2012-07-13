@@ -5,11 +5,11 @@ import maya.mel as mel
 
 def UI():
 	# check to see if window exists
-	if (cmds.window("ao", exists=True)):
-		cmds.deleteUI("ao")
+	if (cmds.window('ao', exists=True)):
+		cmds.deleteUI('ao')
 
 	# create window
-	window = cmds.window("ao", title="Ambient Occlusion", w=300, h=300, mxb=False, mnb=False, sizeable=False)
+	window = cmds.window('ao', title='Ambient Occlusion', w=300, h=300, mxb=False, mnb=False, sizeable=False)
 	
 	# create layout
 	mainLayout = cmds.columnLayout(w=300, h=300)
@@ -25,17 +25,17 @@ def UI():
 		
 	# create input fields
 	cmds.separator(h=15)
-	cmds.text(label="Number of samples")
-	samplesField = cmds.intField("numSamples", v=numSamples, min=0, max=512)
-	cmds.text(label="Spread")
-	spreadField = cmds.floatField("spread", v=spread)
-	cmds.text(label="Max Distance")
-	maxDistanceField = cmds.intField("maxDistance", v=maxDistance)
+	cmds.text(label='Number of samples')
+	samplesField = cmds.intField('numSamples', v=numSamples, min=0, max=512)
+	cmds.text(label='Spread')
+	spreadField = cmds.floatField('spread', v=spread)
+	cmds.text(label='Max Distance')
+	maxDistanceField = cmds.intField('maxDistance', v=maxDistance)
 	
 	# create buttons
 	cmds.separator(h=15)
-	cmds.button(label="Add Ambient Occlusion", w=300, h=30, command=addAmbOcc)
-	cmds.button(label="Update Objects/Settings", w=300, h=30, command=addAmbOcc)
+	cmds.button(label='Add Ambient Occlusion', w=300, h=30, command=addAmbOcc)
+	cmds.button(label='Update Objects/Settings', w=300, h=30, command=addAmbOcc)
 	cmds.separator(h=15)
 	
 	cmds.showWindow(window)
@@ -78,9 +78,9 @@ def changeRS():
 	
 def addAmbOcc(*args):
 	# get the values entered from the UI
-	samplesField = cmds.intField("numSamples", q=True, v=True)
-	spreadField = cmds.floatField("spread", q=True, v=True)
-	maxDistanceField = cmds.intField("maxDistance", q=True, v=True)
+	samplesField = cmds.intField('numSamples', q=True, v=True)
+	spreadField = cmds.floatField('spread', q=True, v=True)
+	maxDistanceField = cmds.intField('maxDistance', q=True, v=True)
 	
 	# if AO already exists, just re add all objects
 	if(aoExists()):
