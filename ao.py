@@ -93,7 +93,8 @@ def addAmbOcc(*args):
 def reAdd(samplesField, spreadField, maxDistanceField):
 	# switch to the ao render layer
 	cmds.editRenderLayerGlobals(currentRenderLayer='ao')
-	cmds.select(ado=True)
+	objects = cmds.ls(g=True)
+	cmds.select(objects)
 	cmds.hyperShade(a='amb_occl_surf_shader')
 	
 	changeAOSettings(samplesField, spreadField, maxDistanceField)
