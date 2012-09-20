@@ -76,6 +76,13 @@ def UI():
 	cmds.menuItem(label='psd', parent='ff')
 	cmds.setParent('..')
 	
+	# resolution
+	cmds.rowLayout(numberOfColumns=3, columnWidth3=(160, 160, 160))
+	cmds.text(label='Resolution', w=145, al='right')
+	cmds.intField('xRes', w=145, v=cmds.getAttr('defaultResolution.width'))
+	cmds.intField('yRes', w=145, v=cmds.getAttr('defaultResolution.height'))
+	cmds.setParent('..') # this "ends" or "closes" the current layout (rowLayout)
+	
 	# start and end frame, by, padding	
 	cmds.separator(h=15)
 	cmds.rowLayout(numberOfColumns=4, columnWidth4=(160, 160, 160, 160))
@@ -124,13 +131,15 @@ def addCommand(*args):
 	e = cmds.intField('endFrame', q=True, v=True)
 	b = cmds.intField('by', q=True, v=True)
 	p = cmds.intField('padding', q=True, v=True)
+	xRes = cmds.intField('xRes', q=True, v=True)
+	yRes = cmds.intField('yRes', q=True, v=True)
 	ff = cmds.optionMenu('ff', q=True, v=True)
 	rl = cmds.optionMenu('rl', q=True, v=True)
 	cam = cmds.optionMenu('cam', q=True, v=True)
 	file = cmds.file(q=True, sn=True)
 	
 	# big string format
-	comm = 'Render -v 0 -rd {0} -im {1} -r {2} -s {3} -e {4} -b {5} -pad {6} -of {7} -cam {8} -rl {9} {10};\n'.format(rd, name, rend, s, e, b, p, ff, cam, rl, file)
+	comm = 'Render -v 0 -rd {0} -im {1} -r {2} -s {3} -e {4} -b {5} -pad {6} -x {7} -y {8} -of {9} -cam {10} -rl {11} {12};\n'.format(rd, name, rend, s, e, b, p, xRes, yRes, ff, cam, rl, file)
 	
 	# get the current commands and add on the new one
 	currCommands = cmds.scrollField('commands', q=True, tx=True)
