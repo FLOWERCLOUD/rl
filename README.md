@@ -37,8 +37,6 @@ A helpful lighting interface for setting up and manipulating lights in your scen
 More information on this script can be found here:
 http://www.samwirch.com/blog/rl-maya-and-mental-ray-03
 
-A lighting
-
 Render (render.py)
 -----------------------------------------
 
