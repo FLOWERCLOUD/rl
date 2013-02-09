@@ -28,3 +28,18 @@ Generates batch render commands that can be executed through the terminal.
 
 More information about Batch Rendering can be found here: 
 http://www.samwirch.com/blog/render-command-line-maya-2012-mac 
+
+Flashlight (light.py)
+-----------------------------------------
+
+A helpful lighting interface for setting up and manipulating lights in your scene.
+
+More information on this script can be found here:
+http://www.samwirch.com/blog/rl-maya-and-mental-ray-03
+
+A lighting
+
+Render (render.py)
+-----------------------------------------
+
+Brings up a simple GUI to quickly render your scene.
