@@ -227,4 +227,7 @@ def addLight(kind, *args):
 		newLight = cmds.shadingNode ('areaLight', asLight=True)
 	cmds.parent(newLight, 'lights')
 	refresh()
+	
+def main():
+    UI()
 		

@@ -176,3 +176,6 @@ def selectCurrent(optionMenuName, t, current):
 	for x in range(len(options)):
 		if(options[x] == current):
 			cmds.optionMenu(optionMenuName, edit=True, sl=x+1)
+			
+def main():
+    UI()

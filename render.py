@@ -42,3 +42,6 @@ def render(rl, width, height, *args):
 	cmds.Mayatomr( preview=True, layer=rl, xResolution=width, yResolution=height, camera='perspShape' )
 	editor = 'renderView'
 	cmds.renderWindowEditor(editor, e=True, si=True)
+
+def main():
+    UI()

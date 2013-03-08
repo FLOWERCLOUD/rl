@@ -106,5 +106,6 @@ def aoExists():
 		if (shader == 'amb_occl_surf_shader'):
 			return True
 	return False
-	
-	
+
+def main():
+    UI()
